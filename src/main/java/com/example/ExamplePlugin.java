@@ -58,6 +58,7 @@ public class ExamplePlugin extends Plugin {
 
             var composition = itemManager.getItemComposition(i);
             var record = ItemRecord.builder()
+                    .id(i)
                     .name(composition.getName()).build();
             index.add(record);
         }

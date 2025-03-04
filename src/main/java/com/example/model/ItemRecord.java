@@ -4,5 +4,6 @@ import lombok.Builder;
 
 @Builder
 public class ItemRecord {
+    private final int id;
     private final String name;
 }
