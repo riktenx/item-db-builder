@@ -1,0 +1,8 @@
+package com.example.model;
+
+import lombok.Builder;
+
+@Builder
+public class ItemRecord {
+    private final String name;
+}
