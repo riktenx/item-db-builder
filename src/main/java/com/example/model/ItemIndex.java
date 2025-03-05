@@ -9,7 +9,4 @@ public class ItemIndex {
     public void add(ItemRecord record) {
         byId.add(record);
     }
-
-    public void build() {
-    }
 }

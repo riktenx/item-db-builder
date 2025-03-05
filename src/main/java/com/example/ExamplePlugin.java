@@ -16,10 +16,13 @@ import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Base64;
 
 @Slf4j
 @PluginDescriptor(
@@ -49,9 +52,9 @@ public class ExamplePlugin extends Plugin {
         var index = new ItemIndex();
         for (var i = 0; i < client.getItemCount(); ++i) {
             var icon = itemManager.getImage(i);
-            var outputFile = new File(ICON_DIRECTORY, i + ".png");
+            var iconData = new ByteArrayOutputStream();
             try {
-                ImageIO.write(icon, "png", outputFile);
+                ImageIO.write(icon, "png", iconData);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -59,11 +62,19 @@ public class ExamplePlugin extends Plugin {
             var composition = itemManager.getItemComposition(i);
             var record = ItemRecord.builder()
                     .id(i)
-                    .name(composition.getName()).build();
+                    .name(composition.getName())
+                    .iconPng(Base64.getEncoder().encodeToString(iconData.toByteArray()))
+                    .build();
             index.add(record);
+
+            var outputFile = new File(ICON_DIRECTORY, i + ".png");
+            try (var writer = new FileOutputStream(outputFile)) {
+                writer.write(iconData.toByteArray());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
-        index.build();
         var indexJson = gson.toJson(index);
         var indexFile = new File(OUTPUT_DIRECTORY, "index.json");
         try (var writer = new FileWriter(indexFile)) {
